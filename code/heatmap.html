@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Heatmap from nearbyvit1.csv</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMKa4KScFT5B0Qf7d25pRYV6DupU-Mm-Y&libraries=visualization"></script>
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        // Initialize the map
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 12,
+            center: {
+                lat: 12.8408,
+                lng: 80.1534
+            }, // Centered on VIT Chennai
+            mapTypeId: "roadmap"
+        });
+
+        let heatmap = null;
+
+        function loadCSV() {
+            fetch('nearbyvit1.csv')
+                .then(response => response.text())
+                .then(data => {
+                    const heatmapData = parseCSV(data);
+                    createHeatmap(heatmapData);
+                })
+                .catch(error => {
+                    console.error('Error loading the CSV file:', error);
+                    alert('Error loading nearbyvit1.csv. Please make sure the file is in the same directory as the HTML file.');
+                });
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const heatmapData = [];
+
+            // Get headers and find column indices (case-insensitive)
+            const headers = lines[0].trim().split(',');
+            const latIndex = headers.findIndex(header => header.toLowerCase() === 'latitude');
+            const lngIndex = headers.findIndex(header => header.toLowerCase() === 'longitude');
+
+            if (latIndex === -1 || lngIndex === -1) {
+                alert('Error: CSV file must contain "latitude" and "longitude" columns');
+                return [];
+            }
+
+            // Parse data rows
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line) {
+                    const columns = line.split(',');
+                    const lat = parseFloat(columns[latIndex]);
+                    const lng = parseFloat(columns[lngIndex]);
+
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        heatmapData.push(new google.maps.LatLng(lat, lng));
+                    }
+                }
+            }
+
+            return heatmapData;
+        }
+
+        function createHeatmap(data) {
+            // Remove existing heatmap if any
+            if (heatmap) {
+                heatmap.setMap(null);
+            }
+
+            // Create new heatmap layer
+            heatmap = new google.maps.visualization.HeatmapLayer({
+                data: data,
+                radius: 20,
+                opacity: 0.8
+            });
+
+            // Add the heatmap layer to the map
+            heatmap.setMap(map);
+
+            // Adjust map center and zoom to fit all points
+            if (data.length > 0) {
+                const bounds = new google.maps.LatLngBounds();
+                data.forEach(point => bounds.extend(point));
+                map.fitBounds(bounds);
+            }
+        }
+
+        // Load the data automatically when the page loads
+        window.addEventListener('load', loadCSV);
+    </script>
+</body>
+
+</html>

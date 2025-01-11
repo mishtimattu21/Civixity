@@ -1,0 +1,10 @@
+latitude	longitude	Category	Status	DateReported	Location
+12.8408	80.1534	pothole	Resolved	5.12.23	vit chennai
+12.8401	80.1534	pothole	Acknowledged	5.12.23	vit cnai
+12.8408	80.154	streetlight	Acknowledged	5.12.23	vit c
+12.8408	80.1534	pothole	Acknowledged	5.12.23	vit chennai
+12.8408	80.1534	pothole	Acknowledged	5.12.23	vit chennai
+12.8408	80.1532	streetlight	Acknowledged	5.12.23	vit chennai
+12.8408	80.153	pothole	Acknowledged	5.12.23	vit chennai
+12.8409	80.1534	pothole	Acknowledged	5.12.23	vit chennai
+12.8406	80.1535	pothole	Acknowledged	5.12.23	vit chennai

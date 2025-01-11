@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaints Within 5km</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/2.15.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            max-width: 300px;
+        }
+        
+        .marker {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .radius-circle {
+            background: rgba(33, 150, 243, 0.1);
+            border: 2px solid rgba(33, 150, 243, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div class="overlay">
+        <h2 style="margin-top: 0;">Complaints Within 5km</h2>
+        <div id="location-info">Click 'Show My Location' to begin</div>
+        <button onclick="getUserLocation()" style="margin-top: 10px; padding: 8px 16px;">Show My Location</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/2.15.0/mapbox-gl.js"></script>
+    <script>
+        // Replace with your Mapbox token
+        mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN';
+
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [80.1534, 12.8408], // Default to Chennai area
+            zoom: 13
+        });
+
+        // Add navigation controls
+        map.addControl(new mapboxgl.NavigationControl());
+
+        let radiusCircle = null;
+        let markers = [];
+
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function showComplaintsInRadius(userLat, userLng, complaints) {
+            // Clear existing markers
+            markers.forEach(marker => marker.remove());
+            markers = [];
+
+            // Add 5km radius circle
+            if (radiusCircle) {
+                radiusCircle.remove();
+            }
+
+            // Create a circle showing 5km radius
+            const radius = 5; // 5km radius
+            const steps = 50;
+            const points = [];
+
+            for (let i = 0; i <= steps; i++) {
+                const angle = (i / steps) * 2 * Math.PI;
+                const lat = userLat + (radius / 111.32) * Math.cos(angle);
+                const lng = userLng + (radius / (111.32 * Math.cos(userLat * Math.PI / 180))) * Math.sin(angle);
+                points.push([lng, lat]);
+            }
+
+            // Add radius circle to map
+            if (map.getSource('radius')) {
+                map.removeLayer('radius-fill');
+                map.removeLayer('radius-border');
+                map.removeSource('radius');
+            }
+
+            map.addSource('radius', {
+                'type': 'geojson',
+                'data': {
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Polygon',
+                        'coordinates': [points]
+                    }
+                }
+            });
+
+            map.addLayer({
+                'id': 'radius-fill',
+                'type': 'fill',
+                'source': 'radius',
+                'paint': {
+                    'fill-color': '#2196F3',
+                    'fill-opacity': 0.1
+                }
+            });
+
+            map.addLayer({
+                'id': 'radius-border',
+                'type': 'line',
+                'source': 'radius',
+                'paint': {
+                    'line-color': '#2196F3',
+                    'line-width': 2,
+                    'line-opacity': 0.3
+                }
+            });
+
+            let complaintsInRadius = 0;
+
+            // Add markers for complaints within radius
+            complaints.forEach(complaint => {
+                const lat = parseFloat(complaint.Latitude);
+                const lng = parseFloat(complaint.Longitude);
+
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    const distance = getDistance(userLat, userLng, lat, lng);
+
+                    if (distance <= radius) {
+                        complaintsInRadius++;
+                        const popup = new mapboxgl.Popup({
+                            closeButton: false,
+                            closeOnClick: false
+                        }).setHTML(`
+                            <div style="padding: 10px;">
+                                <h3 style="margin: 0 0 5px 0;">${complaint.Category}</h3>
+                                <p>Status: ${complaint.Status}</p>
+                                <p>Date: ${complaint.DateReported}</p>
+                                <p>Location: ${complaint.Location}</p>
+                                <p>Distance: ${distance.toFixed(2)} km</p>
+                            </div>
+                        `);
+
+                        const el = document.createElement('div');
+                        el.className = 'marker';
+                        el.style.backgroundColor = complaint.Status === 'Resolved' ? '#4CAF50' : '#FFA000';
+
+                        const marker = new mapboxgl.Marker(el)
+                            .setLngLat([lng, lat])
+                            .setPopup(popup)
+                            .addTo(map);
+
+                        el.addEventListener('mouseenter', () => popup.addTo(map));
+                        el.addEventListener('mouseleave', () => popup.remove());
+
+                        markers.push(marker);
+                    }
+                }
+            });
+
+            document.getElementById('location-info').innerHTML =
+                `Found ${complaintsInRadius} complaints within 5km radius`;
+        }
+
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+
+                        // Add user marker
+                        new mapboxgl.Marker({
+                                color: '#2196F3'
+                            })
+                            .setLngLat([userLng, userLat])
+                            .setPopup(new mapboxgl.Popup().setHTML('<h3>Your Location</h3>'))
+                            .addTo(map);
+
+                        // Fly to user location
+                        map.flyTo({
+                            center: [userLng, userLat],
+                            zoom: 13,
+                            essential: true
+                        });
+
+                        // Load complaints data
+                        fetch('nearbyvit1.csv')
+                            .then(response => response.text())
+                            .then(csvData => {
+                                Papa.parse(csvData, {
+                                    header: true,
+                                    complete: function(results) {
+                                        showComplaintsInRadius(userLat, userLng, results.data);
+                                    }
+                                });
+                            });
+                    },
+                    (error) => {
+                        document.getElementById('location-info').innerHTML =
+                            'Error getting location: ' + error.message;
+                    }
+                );
+            }
+        }
+
+        map.on('load', () => {
+            map.addSource('mapbox-dem', {
+                'type': 'raster-dem',
+                'url': 'mapbox://mapbox.terrain-rgb',
+                'tileSize': 512,
+                'maxzoom': 14
+            });
+            map.setTerrain({
+                'source': 'mapbox-dem',
+                'exaggeration': 1.5
+            });
+        });
+    </script>
+</body>
+
+</html>
