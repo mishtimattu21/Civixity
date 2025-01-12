@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Municipality Announcements</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-image: url('img.png');  /* Updated background image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+        
+        .top-nav {
+            background-color: #2b1810;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .coins {
+            background-color: #ffeb3b;
+            padding: 5px 10px;
+            border-radius: 15px;
+            color: #2b1810;
+        }
+        
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+        
+        .main-container {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .calendar-section {
+            background-color: #d4b5a0;
+            border-radius: 15px;
+            padding: 20px;
+            width: 350px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar {
+            background-color: white;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day {
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .calendar-day:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .calendar-day.active {
+            background-color: #2b1810;
+            color: white;
+        }
+        
+        .announcements-section {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+        }
+        
+        .announcement-header {
+            margin-bottom: 20px;
+        }
+        
+        .announcement-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .recent-announcements {
+            background-color: #d4b5a0;
+            border-radius: 15px;
+            padding: 20px;
+            width: 300px;
+        }
+        
+        .recent-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .recent-image {
+            width: 80px;
+            height: 80px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="top-nav">
+        <div class="nav-links">
+            <a href="#">About your municipality</a>
+            <a href="#">Feedback</a>
+            <a href="#">Important Contacts</a>
+            <a href="#">Help</a>
+        </div>
+        <div class="user-section">
+            <div class="coins">100 coins</div>
+            <div class="user-avatar"></div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="calendar-section">
+            <h2>CALENDAR</h2>
+            <div class="calendar">
+                <div class="calendar-header">
+                    <button id="prevMonth">&lt;</button>
+                    <h3 id="currentMonth">January 2017</h3>
+                    <button id="nextMonth">&gt;</button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+        </div>
+
+        <div class="announcements-section">
+            <div class="announcement-header">
+                <h2>ANNOUNCEMENTS ON:</h2>
+                <p id="selectedDate">SELECTED DATE: 19 JAN 2017</p>
+            </div>
+            <div id="announcements"></div>
+        </div>
+
+        <div class="recent-announcements">
+            <h2>ALL ANNOUNCEMENTS RECENTLY</h2>
+            <div class="recent-card">
+                <div class="recent-image"></div>
+                <p>The market number 2 street in greater kailash is...</p>
+            </div>
+            <div class="recent-card">
+                <div class="recent-image"></div>
+                <p>The market number 2 street in greater kailash is...</p>
+            </div>
+            <div class="recent-card">
+                <div class="recent-image"></div>
+                <p>The market number 2 street in greater kailash is...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const announcements = {
+            '2017-01-19': [{
+                title: 'ANNOUNCEMENT 1 about some tree fallen down on a car near your house',
+                date: '02 JAN 2023'
+            }, {
+                title: 'ANNOUNCEMENT 2 about some tree fallen down on a car near your house',
+                date: '02 JAN 2023'
+            }, {
+                title: 'ANNOUNCEMENT 3 about some tree fallen down on a car near your house',
+                date: '02 JAN 2023'
+            }]
+        };
+
+        let currentDate = new Date(2017, 0, 1); // January 2017
+
+        function renderCalendar() {
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const grid = document.getElementById('calendarGrid');
+            const monthDisplay = document.getElementById('currentMonth');
+        
+            // Clear previous calendar
+            grid.innerHTML = '';
+        
+            // Set month and year display
+            monthDisplay.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+        
+            // Add day headers
+            const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+            days.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.textContent = day;
+                dayHeader.className = 'calendar-day';
+                grid.appendChild(dayHeader);
+            });
+        
+            // Get first day of month and total days
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        
+            // Add blank spaces for days before start of month
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                const blank = document.createElement('div');
+                blank.className = 'calendar-day';
+                grid.appendChild(blank);
+            }
+        
+            // Add days of month
+            for (let i = 1; i <= lastDay.getDate(); i++) {
+                const day = document.createElement('div');
+                day.textContent = i;
+                day.className = 'calendar-day';
+                day.addEventListener('click', () => selectDate(i));
+                grid.appendChild(day);
+            }
+        }
+        
+        function selectDate(day) {
+            const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+            const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        
+            document.getElementById('selectedDate').textContent = `SELECTED DATE: ${day} ${currentDate.toLocaleString('default', { month: 'short' })} ${currentDate.getFullYear()}`;
+        
+            // Update announcements
+            const announcementsContainer = document.getElementById('announcements');
+            announcementsContainer.innerHTML = '';
+        
+            if (announcements[formattedDate]) {
+                announcements[formattedDate].forEach(announcement => {
+                    const card = document.createElement('div');
+                    card.className = 'announcement-card';
+                    card.innerHTML = `
+                        <h3>${announcement.title}</h3>
+                        <p>${announcement.date}</p>
+                    `;
+                    announcementsContainer.appendChild(card);
+                });
+            }
+        }
+        
+
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+            renderCalendar();
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+            renderCalendar();
+        });
+
+        // Initial render
+        renderCalendar();
+    </script>
+</body>
+
+</html>

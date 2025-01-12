@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Kalaignar Nagaram Municipality</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f4f9;
+        }
+        .header {
+            background: linear-gradient(135deg, #1d4e89 0%, #1a237e 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .contact-info {
+            background-color: #e9ecef;
+            padding: 1.5rem;
+            border-radius: 5px;
+        }
+        .image-frame {
+            position: relative;
+            padding: 20px;
+            background: #8b4513;
+            border-radius: 10px;
+            box-shadow: 
+                0 0 0 2px #8b4513,
+                0 0 0 15px #deb887,
+                5px 5px 15px rgba(0,0,0,0.3);
+            margin: 30px auto;
+            max-width: 850px;
+        }
+        .image-frame img {
+            width: 100%;
+            height: auto;
+            border: 2px solid #deb887;
+            display: block;
+        }
+        .image-frame::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 20px;
+            background: #8b4513;
+            border-radius: 5px;
+        }
+        .announcement {
+            background-color: #fef3c7;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #d97706;
+            color: #6b4513;
+        }
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .image-frame {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome to Kalaignar Nagaram Municipality</h1>
+        <p>Working for People's Welfare</p>
+    </div>
+
+    <div class="container">
+        <div class="announcement">
+            <p><strong>Latest Update:</strong> E-Seva center timings extended until 6:00 PM on weekdays.</p>
+        </div>
+
+        <div class="section">
+            <h2>About Our Municipality</h2>
+            <div class="image-frame">
+                <img src="./muncipality.jpeg" alt="Aerial view of Kalaignar Nagaram showing temple towers and modern buildings">
+            </div>
+            <p>Kalaignar Nagaram Municipality, established under the Tamil Nadu District Municipalities Act, 1920, serves a population of 2.5 lakhs. Our municipality is known for its heritage temples, educational institutions, and rapidly growing IT corridor. We are proud to be implementing the Tamil Nadu Chief Minister's comprehensive development scheme.</p>
+        </div>
+
+        <div class="section contact-info">
+            <h2>Contact Information</h2>
+            <p>Municipality Office, Main Road, Kalaignar Nagaram, Tamil Nadu, India.</p>
+            <p>Email: info@kalaignarmunicipality.gov</p>
+            <p>Phone: +91-12345-67890</p>
+        </div>
+    </div>
+</body>
+</html>

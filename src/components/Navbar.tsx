@@ -1,13 +1,36 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Book } from 'lucide-react';
+import { Book, Coins } from 'lucide-react';
 
 interface NavbarProps {
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
+  userCoins?: number;
 }
 
-function Navbar({ isAuthenticated, setIsAuthenticated }: NavbarProps) {
+interface NavLinkProps {
+  to: string;
+  text: string;
+  external?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
+}
+
+function Navbar({ isAuthenticated, setIsAuthenticated, userCoins = 0 }: NavbarProps) {
+  const handleLeaderboardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.open('src/code/leaderboard.html', '_blank', 'noopener,noreferrer');
+  };
+
+  const handleFeedbackClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.open('src/code/feedback.html', '_blank', 'noopener,noreferrer');
+  };
+
+  const handleMunicipalityClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.open('src/code/muncipality.html', '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <nav className="bg-[#331800] text-white shadow-md sticky top-0 z-50 opacity-100">
       <div className="container mx-auto px-6 py-4">
@@ -15,8 +38,8 @@ function Navbar({ isAuthenticated, setIsAuthenticated }: NavbarProps) {
           <Link to="/" className="flex items-center space-x-9" style={{ marginRight: '30px' }}>
             <div className="w-10 h-10 rounded-full overflow-hidden">
               <img 
-                src="https://img.freepik.com/free-vector/cute-panda-reading-book-cartoon-icon-illustration_138676-2683.jpg?t=st=1736486588~exp=1736490188~hmac=18cf9d754f3e014d5e7d63c9a8cfd4a8784c0d563e4f219682a018750a8e54b6&w=5000&fit=crop" 
-                alt="PandaLearn Logo" 
+                src="src/components/logo.jpg" 
+                alt="CivixityLogo" 
                 className="scale-150"
               />
             </div>
@@ -26,10 +49,27 @@ function Navbar({ isAuthenticated, setIsAuthenticated }: NavbarProps) {
           </Link>
           
           <div className="flex items-center space-x-9">
-            <NavLink to="/about" text="About Your Municipality" />
-            <NavLink to="/library" text="Library" />
-            <NavLink to="/feedback" text="Feedback" />
+            <NavLink 
+              to="#" 
+              text="About Your Municipality" 
+              external={true} 
+              onClick={handleMunicipalityClick}
+            />
+            <NavLink 
+              to="#" 
+              text="Feedback" 
+              external={true} 
+              onClick={handleFeedbackClick}
+            />
             <NavLink to="/contacts" text="Important Contacts" />
+            <button
+              onClick={handleLeaderboardClick}
+              className="flex items-center space-x-2 hover:text-gray-200 transition-colors font-medium"
+              aria-label="View Leaderboard"
+            >
+              <Coins size={20} />
+              <span>{userCoins}</span>
+            </button>
             <NavLink to="/login" text="Login" />
           </div>
         </div>
@@ -38,7 +78,19 @@ function Navbar({ isAuthenticated, setIsAuthenticated }: NavbarProps) {
   );
 }
 
-function NavLink({ to, text }: { to: string; text: string }) {
+function NavLink({ to, text, external, onClick }: NavLinkProps) {
+  if (external) {
+    return (
+      <a 
+        href={to}
+        onClick={onClick}
+        className="text-white hover:text-gray-200 transition-colors font-medium"
+      >
+        {text}
+      </a>
+    );
+  }
+
   return (
     <Link 
       to={to} 
@@ -50,4 +102,3 @@ function NavLink({ to, text }: { to: string; text: string }) {
 }
 
 export default Navbar;
-

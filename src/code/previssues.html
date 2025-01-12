@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Issues Calendar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-image: url('img.png');  /* Updated background image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+
+        /* Rest of your CSS remains the same */
+        .main-container {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .sidebar {
+            background-color: #d4b5a0;
+            border-radius: 15px;
+            padding: 20px;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            height: calc(100vh - 40px);
+            width: 360px;
+        }
+
+        .calendar {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header button {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day {
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background-color: #f0f0f0;
+        }
+
+        .calendar-day.active {
+            background-color: #2b1810;
+            color: white;
+        }
+
+        .calendar-day.has-issues::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: #d32f2f;
+            border-radius: 50%;
+        }
+
+        .middle-content {
+            margin-left: 380px;
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            background: #ddd;
+            border-radius: 50%;
+        }
+
+        .post-content {
+            margin-bottom: 15px;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-button {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #f5f5f5;
+        }
+
+        #selectedDate {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            color: #2b1810;
+        }
+    </style>
+</head>
+
+<!-- Rest of your HTML and JavaScript code remains exactly the same -->
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <h2 style="color: #2b1810; margin-bottom: 15px;">CALENDAR</h2>
+            <div class="calendar">
+                <div class="calendar-header">
+                    <button id="prevMonth">&lt;</button>
+                    <h3 id="currentMonth">January 2023</h3>
+                    <button id="nextMonth">&gt;</button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+        </div>
+
+        <div class="middle-content">
+            <h2 id="selectedDate">Issues for January 12, 2023</h2>
+            <div id="issuesContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const issuesByDate = {
+            '2023-01-12': [
+                {
+                    author: 'Lara Kapoor',
+                    time: '5 min ago',
+                    content: 'The market number 2 street in greater kailash is filled with potholes making it extremely difficult for vehicles. I saw 2 children falling down by bicycle today morning.',
+                    image: 'issue2.jpg'
+                },
+                {
+                    author: 'Tushar',
+                    time: '1 hour ago',
+                    content: 'There is a significant amount of trash scattered on Kailash, creating an unpleasant and unhygienic environment. It poses health risks to residents and negatively impacts the area\'s appearance.',
+                    image: 'issue1.jpg'
+                }
+            ],
+            '2023-01-15': [
+                {
+                    author: 'Amit Kumar',
+                    time: '2 hours ago',
+                    content: 'Street lights in sector 7 are not working properly. This is causing safety concerns for residents walking at night.',
+                    image: 'streetlight.jpg'
+                }
+            ]
+        };
+
+        let currentDate = new Date();
+
+        function renderCalendar() {
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const grid = document.getElementById('calendarGrid');
+            const monthDisplay = document.getElementById('currentMonth');
+
+            grid.innerHTML = '';
+            monthDisplay.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+            const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+            days.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.textContent = day;
+                dayHeader.className = 'calendar-day';
+                dayHeader.style.fontWeight = 'bold';
+                grid.appendChild(dayHeader);
+            });
+
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                const blank = document.createElement('div');
+                blank.className = 'calendar-day';
+                grid.appendChild(blank);
+            }
+
+            for (let i = 1; i <= lastDay.getDate(); i++) {
+                const day = document.createElement('div');
+                day.textContent = i;
+                day.className = 'calendar-day';
+
+                const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                if (issuesByDate[dateStr]) {
+                    day.classList.add('has-issues');
+                }
+
+                day.addEventListener('click', () => selectDate(i));
+                grid.appendChild(day);
+            }
+        }
+
+        function selectDate(day) {
+            const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+            document.getElementById('selectedDate').textContent = `Issues for ${monthNames[currentDate.getMonth()]} ${day}, ${currentDate.getFullYear()}`;
+
+            const container = document.getElementById('issuesContainer');
+            container.innerHTML = '';
+
+            if (issuesByDate[dateStr]) {
+                issuesByDate[dateStr].forEach(issue => {
+                    const card = document.createElement('div');
+                    card.className = 'post-card';
+                    card.innerHTML = `
+                        <div class="post-header">
+                            <div class="post-avatar"></div>
+                            <div>
+                                <div style="font-weight: bold;">${issue.author}</div>
+                                <div style="font-size: 12px; color: #666;">${issue.time}</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            ${issue.content}
+                            <img src="${issue.image}" alt="Issue Image" class="post-image">
+                        </div>
+                        <div class="post-actions">
+                            <button class="action-button">👍 UPVOTE</button>
+                            <button class="action-button">👎 DOWNVOTE</button>
+                            <button class="action-button">💬 Comments</button>
+                            <button class="action-button">📍 Location</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } else {
+                container.innerHTML = '<div class="post-card">No issues reported for this date.</div>';
+            }
+        }
+
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+            renderCalendar();
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+            renderCalendar();
+        });
+
+        renderCalendar();
+        selectDate(currentDate.getDate());
+    </script>
+</body>
+</html>

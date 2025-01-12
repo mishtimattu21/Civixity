@@ -1,72 +1,97 @@
-import React from 'react';
-import { Book, Brain, Heart } from 'lucide-react';
+import React, { useEffect, useRef } from "react";
 
-function Library() {
-  const resources = [
-    {
-      id: 1,
-      title: 'Mental Health Basics',
-      description: 'Learn about the fundamentals of mental health and well-being.',
-      icon: <Brain className="w-6 h-6" />,
-      categories: ['Mental Health', 'Wellness']
-    },
-    {
-      id: 2,
-      title: 'Emotional Intelligence',
-      description: 'Develop your emotional awareness and understanding.',
-      icon: <Heart className="w-6 h-6" />,
-      categories: ['Emotional Health', 'Personal Growth']
-    },
-    {
-      id: 3,
-      title: 'Study Techniques',
-      description: 'Effective methods for better learning and retention.',
-      icon: <Book className="w-6 h-6" />,
-      categories: ['Education', 'Skills']
+// Ensure you have @types/google.maps installed for proper typings
+// npm install @types/google.maps
+
+const Heatmap: React.FC = () => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const map = useRef<google.maps.Map | null>(null);
+  const heatmap = useRef<google.maps.visualization.HeatmapLayer | null>(null);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      // Initialize the map
+      map.current = new google.maps.Map(mapRef.current, {
+        zoom: 12,
+        center: { lat: 12.8408, lng: 80.1534 }, // Centered on VIT Chennai
+        mapTypeId: "roadmap",
+      });
+
+      // Load the CSV data and create the heatmap
+      loadCSV();
     }
-  ];
+  }, []);
 
-  return (
-    <div className="container mx-auto px-6 py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Learning Library</h1>
-        
-        <div className="grid gap-6">
-          {resources.map((resource) => (
-            <div
-              key={resource.id}
-              className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-            >
-              <div className="flex items-start space-x-4">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  {resource.icon}
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                    {resource.title}
-                  </h2>
-                  <p className="text-gray-600 mb-4">{resource.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {resource.categories.map((category) => (
-                      <span
-                        key={category}
-                        className="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm"
-                      >
-                        {category}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                  Read More
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+  const loadCSV = async () => {
+    try {
+      const response = await fetch("/nearbyvit1.csv");
+      const data = await response.text();
+      const heatmapData = parseCSV(data);
+      createHeatmap(heatmapData);
+    } catch (error) {
+      console.error("Error loading the CSV file:", error);
+      alert("Error loading nearbyvit1.csv. Please make sure the file is in the same directory as the HTML file.");
+    }
+  };
 
-export default Library;
+  const parseCSV = (csvText: string): google.maps.LatLng[] => {
+    const lines = csvText.split("\n");
+    const heatmapData: google.maps.LatLng[] = [];
+
+    // Get headers and find column indices (case-insensitive)
+    const headers = lines[0].trim().split(",");
+    const latIndex = headers.findIndex((header) => header.toLowerCase() === "latitude");
+    const lngIndex = headers.findIndex((header) => header.toLowerCase() === "longitude");
+
+    if (latIndex === -1 || lngIndex === -1) {
+      alert('Error: CSV file must contain "latitude" and "longitude" columns');
+      return [];
+    }
+
+    // Parse data rows
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line) {
+        const columns = line.split(",");
+        const lat = parseFloat(columns[latIndex]);
+        const lng = parseFloat(columns[lngIndex]);
+
+        if (!isNaN(lat) && !isNaN(lng)) {
+          heatmapData.push(new google.maps.LatLng(lat, lng));
+        }
+      }
+    }
+
+    return heatmapData;
+  };
+
+  const createHeatmap = (data: google.maps.LatLng[]) => {
+    if (!map.current) return;
+
+    // Remove existing heatmap if any
+    if (heatmap.current) {
+      heatmap.current.setMap(null);
+    }
+
+    // Create new heatmap layer
+    heatmap.current = new google.maps.visualization.HeatmapLayer({
+      data: data,
+      radius: 20,
+      opacity: 0.8,
+    });
+
+    // Add the heatmap layer to the map
+    heatmap.current.setMap(map.current);
+
+    // Adjust map center and zoom to fit all points
+    if (data.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+      data.forEach((point) => bounds.extend(point));
+      map.current.fitBounds(bounds);
+    }
+  };
+
+  return <div ref={mapRef} style={{ height: "100vh", width: "100%" }} />;
+};
+
+export default Heatmap;

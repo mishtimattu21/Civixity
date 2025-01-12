@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Issue Feedback Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-image: url(img.png);
+        }
+        
+        .feedback-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .rating-group {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .rating-group label {
+            font-weight: normal;
+        }
+        
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .required {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="feedback-container">
+        <h2>Complaint Resolution Feedback</h2>
+        <form id="feedbackForm" action="#" method="POST">
+            <div class="form-group">
+                <label>Complaint id <span class="required">*</span></label>
+                <input type="text" name="issueRef" required placeholder="e.g., #12345">
+            </div>
+
+            <div class="form-group">
+                <label>How satisfied were you with the resolution? <span class="required">*</span></label>
+                <div class="rating-group">
+                    <input type="radio" name="satisfaction" value="5" id="sat5" required>
+                    <label for="sat5">Very Satisfied</label>
+                    <input type="radio" name="satisfaction" value="4" id="sat4">
+                    <label for="sat4">Satisfied</label>
+                    <input type="radio" name="satisfaction" value="3" id="sat3">
+                    <label for="sat3">Neutral</label>
+                    <input type="radio" name="satisfaction" value="2" id="sat2">
+                    <label for="sat2">Dissatisfied</label>
+                    <input type="radio" name="satisfaction" value="1" id="sat1">
+                    <label for="sat1">Very Dissatisfied</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>How would you rate the response time?</label>
+                <select name="responseTime">
+                    <option value="">Select an option</option>
+                    <option value="excellent">Excellent - Within 24 hours</option>
+                    <option value="good">Good - Within 48 hours</option>
+                    <option value="fair">Fair - Within a week</option>
+                    <option value="poor">Poor - More than a week</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Was the issue completely resolved?</label>
+                <div class="rating-group">
+                    <input type="radio" name="resolved" value="yes" id="resYes">
+                    <label for="resYes">Yes</label>
+                    <input type="radio" name="resolved" value="no" id="resNo">
+                    <label for="resNo">No</label>
+                    <input type="radio" name="resolved" value="partially" id="resPartially">
+                    <label for="resPartially">Partially</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Additional Comments</label>
+                <textarea name="comments" placeholder="Please share any additional feedback or suggestions..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Your Email (optional)</label>
+                <input type="email" name="email" placeholder="For follow-up communications">
+            </div>
+
+            <div class="form-group">
+                <input type="checkbox" id="followup" name="followup">
+                <label for="followup">I would like to be contacted about my feedback</label>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Feedback</button>
+        </form>
+    </div>
+</body>
+
+</html>

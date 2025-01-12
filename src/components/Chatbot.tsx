@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 const Chatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([
-    { text: "Hi! I'm Eddie, your learning assistant. How can I help you today?", isUser: false }
+    { text: "Hi! I'm Eddie. How can I help you today?", isUser: false }
   ]);
   const [input, setInput] = useState('');
 
@@ -77,12 +77,12 @@ const Chatbot: React.FC = () => {
       ) : (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-cyan-400 text-white p-4 rounded-full shadow-lg hover:bg-yellow-700"
+          className="bg-transparent text-white p-4 rounded-full shadow-lg hover:bg-yellow-700"
         >
           <img 
-            src="https://img.freepik.com/free-vector/cute-panda-playing-dj-electronic-music-cartoon-vector-icon-illustration-animal-music-isolated-flat_138676-9488.jpg?t=st=1736493447~exp=1736497047~hmac=4b699dded965cc8d801160ce2f3211004f936664c09f9de555537c9c24980f72&w=740" 
+            src="src\components\logo.jpg"
             alt="Chatbot Icon" 
-            className="w-[40px] h-[40px] object-cover" 
+            className="w-[50px] h-[50px] object-cover" 
           />
         </button>
       )}
