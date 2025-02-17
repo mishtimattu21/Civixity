@@ -234,7 +234,7 @@ const CreatePost: React.FC = () => {
               htmlFor="file-input"
               className="bg-green-500 text-white p-2 rounded-md "
             >
-              <img src="src/code/upload.jpg" alt="Upload" className="w-5 h-5" />
+              <img src="public/upload.jpg" alt="Upload" className="w-5 h-5" />
             </label>
             <input
               type="file"
@@ -519,19 +519,19 @@ const MainContent: React.FC = () => {
           <SidebarSection title="Issues near you"
            onClick={() => window.open('src/code/nearbyloc4.html', '_blank')}
 >
-            <img src="src/code/issues.jpg" alt="Issues" className="w-full rounded" />
+            <img src="public/issues.jpg" alt="Issues" className="w-full rounded" />
           </SidebarSection>
           
 <SidebarSection 
   title="Heat Map & Stats" 
   onClick={() => window.open('src/code/heatmap.html', '_blank')}
 >
-  <img src="src/code/heatmap.jpg" alt="Heatmap" className="w-full rounded" />
+  <img src="public/heatmap.jpg" alt="Heatmap" className="w-full rounded" />
 </SidebarSection>
           <SidebarSection title="See resolving trends"
           onClick={() => window.open('src/code/trends2.html', '_blank')}
           >
-            <img src="src/code/trends.jpg" alt="Trends" className="w-full rounded" />
+            <img src="public/trends.jpg" alt="Trends" className="w-full rounded" />
           </SidebarSection>
         </div>
       </div>
@@ -543,13 +543,13 @@ const MainContent: React.FC = () => {
           username="Lara Kapoor"
           timeAgo="5 min ago"
           content="The market number 2 street in greater kailash is filled with potholes making it extremely difficult for vehicles. I saw 2 children falling down by bicycle today morning."
-          imageUrl="src/code/issue1.jpeg"
+          imageUrl="public/issue1.jpeg"
         />
         <Post
           username="Tushar"
           timeAgo="1 hour ago"
           content="There is a significant amount of trash scattered on Kailash, creating an unpleasant and unhygienic environment. It poses health risks to residents and negatively impacts the area's appearance."
-          imageUrl="src/code/issues5.png"
+          imageUrl="public/issues5.png"
         />
       </div>
 
@@ -580,7 +580,7 @@ const MainContent: React.FC = () => {
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex gap-3 mb-4">
                 <img
-                  src={`src/code/issue${i}.jpg`}
+                  src={`public/issue${i}.jpg`}
                   alt={`Issue ${i}`}
                   className="w-[70px] h-[70px] rounded"
                 />
@@ -604,7 +604,7 @@ function App() {
     <div
       className="min-h-screen bg-fixed bg-cover bg-center"
       style={{
-        backgroundImage: "url('src/code/img.png')", // Path to your .jpg file
+        backgroundImage: "url('public/img.png')", // Path to your .jpg file
       }}
     >
       <Navbar
